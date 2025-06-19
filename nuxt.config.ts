@@ -4,14 +4,9 @@ import vuetify from "vite-plugin-vuetify";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    baseURL: '/nuxtProject/',
+    baseURL: '/',
   },
-    router: {
-    options: {
-      base: '/nuxtProject/',
-    }
-  },
-
+  ssr: false, // 정적 사이트로 만들기
   devtools: {
     enabled: false,
   },

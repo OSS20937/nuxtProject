@@ -2,12 +2,29 @@ import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRender
 import { getQuery, createError, appendResponseHeader, getResponseStatusText, getResponseStatus } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/h3@1.15.1/node_modules/h3/dist/index.mjs';
 import { stringify, uneval } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/devalue@4.3.3/node_modules/devalue/index.js';
 import { joinURL, withoutTrailingSlash } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/ufo@1.3.0/node_modules/ufo/dist/index.mjs';
-import { renderToString } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/vue@3.3.4/node_modules/vue/server-renderer/index.mjs';
 import { renderSSRHead } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/@unhead+ssr@1.11.20/node_modules/@unhead/ssr/dist/index.mjs';
 import { a as useRuntimeConfig, d as defineRenderHandler, b as useStorage, g as getRouteRules, u as useNitroApp } from './nitro.mjs';
 import { createServerHead as createServerHead$1 } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unhead@1.11.20/node_modules/unhead/dist/index.mjs';
 import { unref, version } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/vue@3.3.4/node_modules/vue/index.mjs';
 import { defineHeadPlugin } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/@unhead+shared@1.11.20/node_modules/@unhead/shared/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/destr@2.0.5/node_modules/destr/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/ofetch@1.4.1/node_modules/ofetch/dist/node.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/node-mock-http@1.0.0/node_modules/node-mock-http/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/ufo@1.6.1/node_modules/ufo/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/drivers/fs.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/drivers/memory.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/drivers/lru-cache.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/drivers/fs-lite.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/ohash@2.0.11/node_modules/ohash/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/klona@2.0.6/node_modules/klona/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/defu@6.1.4/node_modules/defu/dist/defu.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/scule@1.3.0/node_modules/scule/dist/index.mjs';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/radix3@1.1.2/node_modules/radix3/dist/index.mjs';
+import 'node:fs';
+import 'node:url';
+import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/pathe@1.1.2/node_modules/pathe/dist/index.mjs';
 
 const Vue3 = version[0] === "3";
 
@@ -90,29 +107,7 @@ function publicAssetsURL(...path) {
 globalThis.__buildAssetsURL = buildAssetsURL;
 globalThis.__publicAssetsURL = publicAssetsURL;
 const getClientManifest = () => import('../build/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
-const getServerEntry = () => import('../build/server.mjs').then((r) => r.default || r);
 const getSSRStyles = lazyCachedFunction(() => import('../build/styles.mjs').then((r) => r.default || r));
-const getSSRRenderer = lazyCachedFunction(async () => {
-  const manifest = await getClientManifest();
-  if (!manifest) {
-    throw new Error("client.manifest is not available");
-  }
-  const createSSRApp = await getServerEntry();
-  if (!createSSRApp) {
-    throw new Error("Server bundle is not available");
-  }
-  const options = {
-    manifest,
-    renderToString: renderToString$1,
-    buildAssetsURL
-  };
-  const renderer = createRenderer(createSSRApp, options);
-  async function renderToString$1(input, context) {
-    const html = await renderToString(input, context);
-    return `<${appRootTag}${` id="${appRootId}"` }>${html}</${appRootTag}>`;
-  }
-  return renderer;
-});
 const getSPARenderer = lazyCachedFunction(async () => {
   const manifest = await getClientManifest();
   const spaTemplate = await import('../virtual/_virtual_spa-template.mjs').then((r) => r.template).catch(() => "");
@@ -148,7 +143,6 @@ const payloadCache = useStorage("internal:nuxt:prerender:payload") ;
 useStorage("internal:nuxt:prerender:island") ;
 useStorage("internal:nuxt:prerender:island-props") ;
 const PAYLOAD_URL_RE = /\/_payload(\.[a-zA-Z0-9]+)?.json(\?.*)?$/ ;
-const PRERENDER_NO_SSR_ROUTES = /* @__PURE__ */ new Set(["/index.html", "/200.html", "/404.html"]);
 const renderer = defineRenderHandler(async (event) => {
   const nitroApp = useNitroApp();
   const ssrError = event.path.startsWith("/__nuxt_error") ? getQuery(event) : null;
@@ -182,7 +176,7 @@ const renderer = defineRenderHandler(async (event) => {
     url,
     event,
     runtimeConfig: useRuntimeConfig(),
-    noSSR: event.context.nuxt?.noSSR || routeOptions.ssr === false && true || (PRERENDER_NO_SSR_ROUTES.has(url) ),
+    noSSR: true,
     head,
     error: !!ssrError,
     nuxt: void 0,
@@ -196,7 +190,7 @@ const renderer = defineRenderHandler(async (event) => {
   {
     ssrContext.payload.prerenderedAt = Date.now();
   }
-  const renderer = ssrContext.noSSR ? await getSPARenderer() : await getSSRRenderer();
+  const renderer = await getSPARenderer() ;
   const _rendered = await renderer.renderToString(ssrContext).catch(async (error) => {
     if (ssrContext._renderResponse && error.message === "skipping render") {
       return {};
@@ -344,7 +338,7 @@ function renderPayloadJsonScript(opts) {
     type: "application/json",
     id: opts.id,
     innerHTML: contents,
-    "data-ssr": !(opts.ssrContext.noSSR)
+    "data-ssr": false
   };
   if (opts.src) {
     payload["data-src"] = opts.src;
@@ -364,9 +358,4 @@ function splitPayload(ssrContext) {
   };
 }
 
-const renderer$1 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  default: renderer
-});
-
-export { buildAssetsURL as b, renderer$1 as r };
+export { renderer as default };
