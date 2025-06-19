@@ -3,6 +3,7 @@ import { $fetch } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnp
 import { createHooks } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs';
 import { getContext } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unctx@2.4.1/node_modules/unctx/dist/index.mjs';
 import { defu } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/defu@6.1.4/node_modules/defu/dist/defu.mjs';
+import { getActiveHead } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unhead@1.11.20/node_modules/unhead/dist/index.mjs';
 import { defineHeadPlugin } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/@unhead+shared@1.11.20/node_modules/@unhead/shared/dist/index.mjs';
 import { useRouter as useRouter$2, useRoute as useRoute$1, createMemoryHistory, createRouter, START_LOCATION, RouterView } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/vue-router@4.2.5_vue@3.3.4/node_modules/vue-router/dist/vue-router.node.mjs';
 import { createError as createError$1, sanitizeStatusCode, getRequestHeaders, getRequestHeader, setCookie, getCookie, deleteCookie } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/h3@1.15.1/node_modules/h3/dist/index.mjs';
@@ -10,7 +11,7 @@ import { hasProtocol, parseURL, parseQuery, withTrailingSlash, withoutTrailingSl
 import axios from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/axios@1.6.2/node_modules/axios/index.js';
 import { parse } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/cookie-es@1.0.0/node_modules/cookie-es/dist/index.mjs';
 import destr from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/destr@2.0.5/node_modules/destr/dist/index.mjs';
-import { isEqual as isEqual$1 } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/ohash@1.1.6/node_modules/ohash/dist/index.mjs';
+import { isEqual as isEqual$1 } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/ohash@2.0.11/node_modules/ohash/dist/index.mjs';
 import { deepMerge } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/@antfu+utils@0.7.6/node_modules/@antfu/utils/dist/index.mjs';
 import { ssrRenderAttrs, ssrRenderClass, ssrRenderSlot, ssrRenderComponent, ssrRenderList, ssrRenderVNode, ssrRenderStyle, ssrInterpolate, ssrRenderSuspense } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/vue@3.3.4/node_modules/vue/server-renderer/index.mjs';
 import { computePosition, flip, shift } from 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/@floating-ui+dom@1.5.3/node_modules/@floating-ui/dom/dist/floating-ui.dom.mjs';
@@ -24,7 +25,6 @@ import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15
 import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/drivers/memory.mjs';
 import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/drivers/lru-cache.mjs';
 import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/unstorage@1.15.0_db0@0.3.2_ioredis@5.6.1/node_modules/unstorage/drivers/fs-lite.mjs';
-import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/ohash@2.0.11/node_modules/ohash/dist/index.mjs';
 import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/klona@2.0.6/node_modules/klona/dist/index.mjs';
 import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/scule@1.3.0/node_modules/scule/dist/index.mjs';
 import 'file://C:/dev/MyHRVue/HR_nuxt_frontend/node_modules/.pnpm/radix3@1.1.2/node_modules/radix3/dist/index.mjs';
@@ -233,10 +233,20 @@ defineHeadPlugin({
     }
   }
 });
+const headSymbol = "usehead";
 const _global$1 = typeof globalThis !== "undefined" ? globalThis : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 const globalKey$2 = "__unhead_injection_handler__";
 function setHeadInjectionHandler(handler) {
   _global$1[globalKey$2] = handler;
+}
+function injectHead() {
+  if (globalKey$2 in _global$1) {
+    return _global$1[globalKey$2]();
+  }
+  const head = inject$1(headSymbol);
+  if (!head && {}.NODE_ENV !== "production")
+    console.warn("Unhead is missing Vue context, falling back to shared context. This may have unexpected results.");
+  return head || getActiveHead();
 }
 const LayoutMetaSymbol = Symbol("layout-meta");
 const PageRouteSymbol = Symbol("route");
@@ -738,6 +748,9 @@ function executeAsync(function_) {
   }
   return [awaitable, restore];
 }
+const __nuxt_page_meta$1 = {
+  prerender: true
+};
 const __nuxt_page_meta = {
   layout: "blank"
 };
@@ -748,7 +761,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./empProfile-3ae2812e.mjs').then((m) => m.default || m)
+    component: () => import('./empProfile-beda2e9d.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-affair-empDetail",
@@ -756,7 +769,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./empDetail-3e5e3933.mjs').then((m) => m.default || m)
+    component: () => import('./empDetail-28301828.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-affair-empList",
@@ -764,7 +777,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./empList-11fa42b5.mjs').then((m) => m.default || m)
+    component: () => import('./empList-828b4258.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-affair-registerEmpList",
@@ -772,7 +785,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./registerEmpList-3f643b85.mjs').then((m) => m.default || m)
+    component: () => import('./registerEmpList-cea84bf6.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-appo-log",
@@ -780,7 +793,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./log-fa10e459.mjs').then((m) => m.default || m)
+    component: () => import('./log-47566359.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-appo-manage",
@@ -788,7 +801,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./manage-178a1f54.mjs').then((m) => m.default || m)
+    component: () => import('./manage-8762c900.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-appo-request",
@@ -796,7 +809,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./request-235c0f4a.mjs').then((m) => m.default || m)
+    component: () => import('./request-7bf02227.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-daily",
@@ -804,7 +817,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./daily-b1414b5a.mjs').then((m) => m.default || m)
+    component: () => import('./daily-5794702d.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-leave",
@@ -812,7 +825,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./leave-366ff39c.mjs').then((m) => m.default || m)
+    component: () => import('./leave-62776cc1.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-overWork",
@@ -820,7 +833,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./overWork-1d39f2cc.mjs').then((m) => m.default || m)
+    component: () => import('./overWork-5a36e909.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-rest",
@@ -828,7 +841,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./rest-c094c7e5.mjs').then((m) => m.default || m)
+    component: () => import('./rest-49510530.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-travelAndEducationRequest",
@@ -836,7 +849,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./travelAndEducationRequest-84b8c7dd.mjs').then((m) => m.default || m)
+    component: () => import('./travelAndEducationRequest-7d6b1455.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-annual",
@@ -844,7 +857,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./annual-a4eb88fa.mjs').then((m) => m.default || m)
+    component: () => import('./annual-774643f5.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-break",
@@ -852,7 +865,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./break-04ea3752.mjs').then((m) => m.default || m)
+    component: () => import('./break-09f475d2.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-daily",
@@ -860,7 +873,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./daily-b0acc492.mjs').then((m) => m.default || m)
+    component: () => import('./daily-1383a41f.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-month",
@@ -868,7 +881,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./month-006b2712.mjs').then((m) => m.default || m)
+    component: () => import('./month-46e66940.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-rest",
@@ -876,7 +889,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./rest-cf798d7d.mjs').then((m) => m.default || m)
+    component: () => import('./rest-b17d9a86.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-base-authManage",
@@ -884,7 +897,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./authManage-1e666cd2.mjs').then((m) => m.default || m)
+    component: () => import('./authManage-89c8037c.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-base-baseWorkTimeManage",
@@ -892,7 +905,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./baseWorkTimeManage-a6e87168.mjs').then((m) => m.default || m)
+    component: () => import('./baseWorkTimeManage-550a14ee.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-base-codeManage",
@@ -900,7 +913,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./codeManage-1ff1c295.mjs').then((m) => m.default || m)
+    component: () => import('./codeManage-353bbc16.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-base-deptManage",
@@ -908,7 +921,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./deptManage-d4ba801c.mjs').then((m) => m.default || m)
+    component: () => import('./deptManage-a4538e4a.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-base-holidayManage",
@@ -916,7 +929,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./holidayManage-4cb658ff.mjs').then((m) => m.default || m)
+    component: () => import('./holidayManage-0219fa95.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-base-positionManage",
@@ -924,7 +937,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./positionManage-8b9a8c08.mjs').then((m) => m.default || m)
+    component: () => import('./positionManage-ddf104d3.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-base-project",
@@ -932,7 +945,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./project-8374b89b.mjs').then((m) => m.default || m)
+    component: () => import('./project-249129a1.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-certificate-approval",
@@ -940,7 +953,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./approval-a552e79b.mjs').then((m) => m.default || m)
+    component: () => import('./approval-456dce62.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-certificate-issue",
@@ -948,7 +961,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./issue-23cc6d03.mjs').then((m) => m.default || m)
+    component: () => import('./issue-fa6cbac8.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-conexpense-approval",
@@ -956,7 +969,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./approval-df35726b.mjs').then((m) => m.default || m)
+    component: () => import('./approval-c2ff57ab.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-conexpense-presentCondition",
@@ -964,7 +977,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./presentCondition-5156f261.mjs').then((m) => m.default || m)
+    component: () => import('./presentCondition-da045721.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-conexpense-request",
@@ -972,7 +985,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./request-0c14e211.mjs').then((m) => m.default || m)
+    component: () => import('./request-c6033771.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-confinement-unauthorized",
@@ -980,7 +993,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./unauthorized-5e960832.mjs').then((m) => m.default || m)
+    component: () => import('./unauthorized-13488901.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-dailyattend-awrds",
@@ -988,7 +1001,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./awrds-38833f1e.mjs').then((m) => m.default || m)
+    component: () => import('./awrds-3483c7b0.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-dailyattend-register",
@@ -996,7 +1009,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./register-042b0f84.mjs').then((m) => m.default || m)
+    component: () => import('./register-bbce676d.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-dailyemp-log",
@@ -1004,7 +1017,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./log-c8ba0d37.mjs').then((m) => m.default || m)
+    component: () => import('./log-4a0b876a.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-dailyemp-manage",
@@ -1012,7 +1025,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./manage-8abfbf67.mjs').then((m) => m.default || m)
+    component: () => import('./manage-8608b853.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-dailysal-awrds",
@@ -1020,7 +1033,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./awrds-54976c1c.mjs').then((m) => m.default || m)
+    component: () => import('./awrds-fb37aacd.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-dailysal-register",
@@ -1028,7 +1041,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./register-d9f84cbd.mjs').then((m) => m.default || m)
+    component: () => import('./register-e4fc77c5.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-dailysal-salary",
@@ -1036,7 +1049,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./salary-f8947c3e.mjs').then((m) => m.default || m)
+    component: () => import('./salary-37ab45d4.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-education-add",
@@ -1044,7 +1057,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./add-f63a7412.mjs').then((m) => m.default || m)
+    component: () => import('./add-467ab54e.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-education-approval",
@@ -1052,7 +1065,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./approval-2a8ecebd.mjs').then((m) => m.default || m)
+    component: () => import('./approval-54cbb6f9.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-education-list",
@@ -1060,7 +1073,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./list-6965f3cf.mjs').then((m) => m.default || m)
+    component: () => import('./list-e9de75bd.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-education-manage",
@@ -1068,7 +1081,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./manage-7e55900a.mjs').then((m) => m.default || m)
+    component: () => import('./manage-105e5c1c.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-empeval-add",
@@ -1076,7 +1089,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./add-885c00b7.mjs').then((m) => m.default || m)
+    component: () => import('./add-8ff97c77.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-empeval-list",
@@ -1084,7 +1097,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./list-a23c30a1.mjs').then((m) => m.default || m)
+    component: () => import('./list-8677a05e.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-empeval-manage",
@@ -1092,7 +1105,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./manage-cee267fa.mjs').then((m) => m.default || m)
+    component: () => import('./manage-6548678a.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salbase-extManage",
@@ -1100,7 +1113,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./extManage-b531b715.mjs').then((m) => m.default || m)
+    component: () => import('./extManage-674b1d47.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salbase-manage",
@@ -1108,7 +1121,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./manage-d5a02f26.mjs').then((m) => m.default || m)
+    component: () => import('./manage-7d2e6b7f.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salbase-socialInsure",
@@ -1116,7 +1129,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./socialInsure-07d8ae05.mjs').then((m) => m.default || m)
+    component: () => import('./socialInsure-3b5c00f9.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salcheck-awrds",
@@ -1124,7 +1137,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./awrds-dcbf5c0c.mjs').then((m) => m.default || m)
+    component: () => import('./awrds-4bbbefc9.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salcheck-month",
@@ -1132,7 +1145,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./month-bbe71427.mjs').then((m) => m.default || m)
+    component: () => import('./month-89491e2b.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salcheck-severancePay",
@@ -1140,7 +1153,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./severancePay-e07a777d.mjs').then((m) => m.default || m)
+    component: () => import('./severancePay-be3895a0.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salreg-award",
@@ -1148,7 +1161,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./award-56155a4b.mjs').then((m) => m.default || m)
+    component: () => import('./award-b7b032b1.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salreg-month",
@@ -1156,7 +1169,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./month-05399d20.mjs').then((m) => m.default || m)
+    component: () => import('./month-b73f3ecd.mjs').then((m) => m.default || m)
   },
   {
     name: "hr-salreg-severancePay",
@@ -1164,15 +1177,15 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./severancePay-c8a73bce.mjs').then((m) => m.default || m)
+    component: () => import('./severancePay-1ce7e7e4.mjs').then((m) => m.default || m)
   },
   {
-    name: "index",
-    path: "/",
-    meta: {},
-    alias: [],
-    redirect: void 0,
-    component: () => import('./index-1e0e5949.mjs').then((m) => m.default || m)
+    name: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.name) ?? "index",
+    path: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.path) ?? "/",
+    meta: __nuxt_page_meta$1 || {},
+    alias: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.alias) || [],
+    redirect: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.redirect) || void 0,
+    component: () => import('./index-e615d6f9.mjs').then((m) => m.default || m)
   },
   {
     name: (__nuxt_page_meta == null ? void 0 : __nuxt_page_meta.name) ?? "login",
@@ -1180,7 +1193,7 @@ const _routes = [
     meta: __nuxt_page_meta || {},
     alias: (__nuxt_page_meta == null ? void 0 : __nuxt_page_meta.alias) || [],
     redirect: (__nuxt_page_meta == null ? void 0 : __nuxt_page_meta.redirect) || void 0,
-    component: () => import('./login-49e28b7d.mjs').then((m) => m.default || m)
+    component: () => import('./login-12af87a4.mjs').then((m) => m.default || m)
   },
   {
     name: "second-page",
@@ -1188,7 +1201,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./second-page-ac6bc017.mjs').then((m) => m.default || m)
+    component: () => import('./second-page-61e41a17.mjs').then((m) => m.default || m)
   },
   {
     name: "wiztech-hr-emp-eddEmp",
@@ -1196,7 +1209,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./eddEmp-b86a1602.mjs').then((m) => m.default || m)
+    component: () => import('./eddEmp-123a6d92.mjs').then((m) => m.default || m)
   },
   {
     name: "wiztech-hr-emp-findEmp",
@@ -1204,7 +1217,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./findEmp-92b96c22.mjs').then((m) => m.default || m)
+    component: () => import('./findEmp-b946822c.mjs').then((m) => m.default || m)
   },
   {
     name: "wiztech-hr-emp-modal-empDetail",
@@ -1212,7 +1225,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import('./empDetail-45f96c46.mjs').then((m) => m.default || m)
+    component: () => import('./empDetail-0d1b29db.mjs').then((m) => m.default || m)
   }
 ];
 const routerOptions0 = {
@@ -1259,7 +1272,9 @@ function _getHashElementScrollMarginTop(selector) {
 function _isDifferentRoute(from, to) {
   return to.path !== from.path || JSON.stringify(from.params) !== JSON.stringify(to.params);
 }
-const configRouterOptions = {};
+const configRouterOptions = {
+  base: "/nuxtProject/"
+};
 const routerOptions = {
   ...configRouterOptions,
   ...routerOptions0
@@ -12255,8 +12270,8 @@ const _wrapIf = (component, props, slots) => {
   } };
 };
 const layouts = {
-  blank: () => import('./blank-cfc14d68.mjs').then((m) => m.default || m),
-  default: () => import('./default-c54dcf5f.mjs').then((m) => m.default || m)
+  blank: () => import('./blank-df81c412.mjs').then((m) => m.default || m),
+  default: () => import('./default-3be6ebc9.mjs').then((m) => m.default || m)
 };
 const LayoutLoader = /* @__PURE__ */ defineComponent$1({
   name: "LayoutLoader",
@@ -13123,7 +13138,7 @@ const _sfc_main = {
   __name: "nuxt-root",
   __ssrInlineRender: true,
   setup(__props) {
-    const IslandRenderer = /* @__PURE__ */ defineAsyncComponent(() => import('./island-renderer-67fa5a40.mjs').then((r) => r.default || r));
+    const IslandRenderer = /* @__PURE__ */ defineAsyncComponent(() => import('./island-renderer-8566ef0e.mjs').then((r) => r.default || r));
     const nuxtApp = /* @__PURE__ */ useNuxtApp();
     nuxtApp.deferHydration();
     nuxtApp.ssrContext.url;
@@ -13189,4 +13204,4 @@ let entry;
 }
 const entry$1 = (ctx) => entry(ctx);
 
-export { VSlideYTransition as $, convertToUnit as A, useConfigStore as B, filterInputAttrs as C, useFocus as D, useTheme as E, useProxiedModel as F, clamp as G, useLocale as H, defineFunctionalComponent as I, createRange as J, deepEqual as K, wrapInArray as L, getObjectValueByPath as M, isEmpty as N, IconValue as O, makeLoaderProps as P, useLoader as Q, useBackgroundColor as R, LoaderSlot as S, makeDensityProps as T, useDensity as U, VCard as V, getPropertyFromItem as W, getCurrentInstance as X, provideDefaults as Y, makeTransitionProps$1 as Z, _export_sfc as _, VImg as a, keyValues as a$, MaybeTransition as a0, getCurrentInstanceName as a1, EventProp as a2, makeRoundedProps as a3, useRounded as a4, getUid as a5, nullifyTransforms as a6, animate as a7, VExpandXTransition as a8, isOn as a9, useResizeObserver as aA, useDisplay as aB, makeDimensionProps as aC, useDimension as aD, VDialogTransition as aE, makeLocationProps as aF, makePositionProps as aG, makeVOverlayProps as aH, useLocation as aI, usePosition as aJ, useScopeId as aK, VOverlay as aL, createSimpleFunctional as aM, VExpandTransition as aN, defineComponent as aO, deprecate as aP, focusChild as aQ, VMenuSymbol as aR, focusableChildren as aS, getNextElement as aT, makeVBtnProps as aU, VFadeTransition as aV, isObject as aW, keys as aX, makeLazyProps as aY, useLazy as aZ, sys as a_, pick as aa, standardEasing as ab, consoleWarn as ac, useToggleScope as ad, Intersect$1 as ae, forwardRefs as af, callEvent as ag, Ripple as ah, matchesSelector as ai, omit as aj, makeGroupProps as ak, makeVariantProps as al, useGroup as am, makeBorderProps as an, makeElevationProps as ao, makeGroupItemProps as ap, makeRouterProps as aq, makeSizeProps as ar, useBorder as as, useVariant as at, useElevation as au, useSize as av, useGroupItem as aw, useLink as ax, genOverlays as ay, VDefaultsProvider as az, VBtn as b, useGenerateImageVariant as b0, authV2MaskDark as b1, authV2MaskLight as b2, VNodeRenderer as b3, themeConfig as b4, AppContentLayoutNav as b5, switchToVerticalNavOnLtOverlayNavBreakpoint as b6, _sfc_main$f as b7, __nuxt_component_0$1 as b8, _sfc_main$7 as b9, createError as c, defineStore as d, entry$1 as default, VCardActions as e, VCardText as f, VCardTitle as g, hrApi as h, VIcon as i, VAvatar as j, VApp as k, VDialog as l, VSpacer as m, attenStore as n, useRouter$1 as o, propsFactory as p, makeComponentProps as q, makeTagProps as r, genericComponent as s, useRtl as t, useLoginStore as u, useRender as v, breakpoints as w, makeThemeProps as x, provideTheme as y, useTextColor as z };
+export { VSlideYTransition as $, convertToUnit as A, useConfigStore as B, filterInputAttrs as C, useFocus as D, useTheme as E, useProxiedModel as F, clamp as G, useLocale as H, defineFunctionalComponent as I, createRange as J, deepEqual as K, wrapInArray as L, getObjectValueByPath as M, isEmpty as N, IconValue as O, makeLoaderProps as P, useLoader as Q, useBackgroundColor as R, LoaderSlot as S, makeDensityProps as T, useDensity as U, VCard as V, getPropertyFromItem as W, getCurrentInstance as X, provideDefaults as Y, makeTransitionProps$1 as Z, _export_sfc as _, VImg as a, keyValues as a$, MaybeTransition as a0, getCurrentInstanceName as a1, EventProp as a2, makeRoundedProps as a3, useRounded as a4, getUid as a5, nullifyTransforms as a6, animate as a7, VExpandXTransition as a8, isOn as a9, useResizeObserver as aA, useDisplay as aB, makeDimensionProps as aC, useDimension as aD, VDialogTransition as aE, makeLocationProps as aF, makePositionProps as aG, makeVOverlayProps as aH, useLocation as aI, usePosition as aJ, useScopeId as aK, VOverlay as aL, createSimpleFunctional as aM, VExpandTransition as aN, defineComponent as aO, deprecate as aP, focusChild as aQ, VMenuSymbol as aR, focusableChildren as aS, getNextElement as aT, makeVBtnProps as aU, VFadeTransition as aV, isObject as aW, keys as aX, makeLazyProps as aY, useLazy as aZ, sys as a_, pick as aa, standardEasing as ab, consoleWarn as ac, useToggleScope as ad, Intersect$1 as ae, forwardRefs as af, callEvent as ag, Ripple as ah, matchesSelector as ai, omit as aj, makeGroupProps as ak, makeVariantProps as al, useGroup as am, makeBorderProps as an, makeElevationProps as ao, makeGroupItemProps as ap, makeRouterProps as aq, makeSizeProps as ar, useBorder as as, useVariant as at, useElevation as au, useSize as av, useGroupItem as aw, useLink as ax, genOverlays as ay, VDefaultsProvider as az, VBtn as b, useGenerateImageVariant as b0, authV2MaskDark as b1, authV2MaskLight as b2, VNodeRenderer as b3, themeConfig as b4, AppContentLayoutNav as b5, injectHead as b6, resolveUnrefHeadInput as b7, switchToVerticalNavOnLtOverlayNavBreakpoint as b8, _sfc_main$f as b9, __nuxt_component_0$1 as ba, _sfc_main$7 as bb, createError as c, defineStore as d, entry$1 as default, VCardActions as e, VCardText as f, VCardTitle as g, hrApi as h, VIcon as i, VAvatar as j, VApp as k, VDialog as l, VSpacer as m, attenStore as n, useRouter$1 as o, propsFactory as p, makeComponentProps as q, makeTagProps as r, genericComponent as s, useRtl as t, useLoginStore as u, useRender as v, breakpoints as w, makeThemeProps as x, provideTheme as y, useTextColor as z };

@@ -6,6 +6,7 @@ import { getContext } from "unctx";
 import "devalue";
 import { defu } from "defu";
 import "klona";
+import { getActiveHead } from "unhead";
 import { defineHeadPlugin } from "@unhead/shared";
 import { createMemoryHistory, createRouter, START_LOCATION, useRoute as useRoute$1, RouterView, useRouter as useRouter$2 } from "vue-router";
 import { sanitizeStatusCode, createError as createError$1, getRequestHeaders, getRequestHeader, setCookie, getCookie, deleteCookie } from "h3";
@@ -225,10 +226,20 @@ defineHeadPlugin({
     }
   }
 });
+const headSymbol = "usehead";
 const _global$1 = typeof globalThis !== "undefined" ? globalThis : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 const globalKey$2 = "__unhead_injection_handler__";
 function setHeadInjectionHandler(handler) {
   _global$1[globalKey$2] = handler;
+}
+function injectHead() {
+  if (globalKey$2 in _global$1) {
+    return _global$1[globalKey$2]();
+  }
+  const head = inject$1(headSymbol);
+  if (!head && {}.NODE_ENV !== "production")
+    console.warn("Unhead is missing Vue context, falling back to shared context. This may have unexpected results.");
+  return head || getActiveHead();
 }
 const LayoutMetaSymbol = Symbol("layout-meta");
 const PageRouteSymbol = Symbol("route");
@@ -731,6 +742,9 @@ function executeAsync(function_) {
   }
   return [awaitable, restore];
 }
+const __nuxt_page_meta$1 = {
+  prerender: true
+};
 const __nuxt_page_meta = {
   layout: "blank"
 };
@@ -741,7 +755,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/empProfile-3ae2812e.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/empProfile-beda2e9d.js").then((m) => m.default || m)
   },
   {
     name: "hr-affair-empDetail",
@@ -749,7 +763,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/empDetail-3e5e3933.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/empDetail-28301828.js").then((m) => m.default || m)
   },
   {
     name: "hr-affair-empList",
@@ -757,7 +771,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/empList-11fa42b5.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/empList-828b4258.js").then((m) => m.default || m)
   },
   {
     name: "hr-affair-registerEmpList",
@@ -765,7 +779,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/registerEmpList-3f643b85.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/registerEmpList-cea84bf6.js").then((m) => m.default || m)
   },
   {
     name: "hr-appo-log",
@@ -773,7 +787,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/log-fa10e459.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/log-47566359.js").then((m) => m.default || m)
   },
   {
     name: "hr-appo-manage",
@@ -781,7 +795,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/manage-178a1f54.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/manage-8762c900.js").then((m) => m.default || m)
   },
   {
     name: "hr-appo-request",
@@ -789,7 +803,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/request-235c0f4a.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/request-7bf02227.js").then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-daily",
@@ -797,7 +811,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/daily-b1414b5a.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/daily-5794702d.js").then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-leave",
@@ -805,7 +819,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/leave-366ff39c.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/leave-62776cc1.js").then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-overWork",
@@ -813,7 +827,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/overWork-1d39f2cc.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/overWork-5a36e909.js").then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-rest",
@@ -821,7 +835,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/rest-c094c7e5.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/rest-49510530.js").then((m) => m.default || m)
   },
   {
     name: "hr-attendreg-travelAndEducationRequest",
@@ -829,7 +843,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/travelAndEducationRequest-84b8c7dd.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/travelAndEducationRequest-7d6b1455.js").then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-annual",
@@ -837,7 +851,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/annual-a4eb88fa.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/annual-774643f5.js").then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-break",
@@ -845,7 +859,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/break-04ea3752.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/break-09f475d2.js").then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-daily",
@@ -853,7 +867,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/daily-b0acc492.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/daily-1383a41f.js").then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-month",
@@ -861,7 +875,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/month-006b2712.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/month-46e66940.js").then((m) => m.default || m)
   },
   {
     name: "hr-attndmgmt-rest",
@@ -869,7 +883,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/rest-cf798d7d.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/rest-b17d9a86.js").then((m) => m.default || m)
   },
   {
     name: "hr-base-authManage",
@@ -877,7 +891,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/authManage-1e666cd2.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/authManage-89c8037c.js").then((m) => m.default || m)
   },
   {
     name: "hr-base-baseWorkTimeManage",
@@ -885,7 +899,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/baseWorkTimeManage-a6e87168.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/baseWorkTimeManage-550a14ee.js").then((m) => m.default || m)
   },
   {
     name: "hr-base-codeManage",
@@ -893,7 +907,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/codeManage-1ff1c295.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/codeManage-353bbc16.js").then((m) => m.default || m)
   },
   {
     name: "hr-base-deptManage",
@@ -901,7 +915,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/deptManage-d4ba801c.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/deptManage-a4538e4a.js").then((m) => m.default || m)
   },
   {
     name: "hr-base-holidayManage",
@@ -909,7 +923,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/holidayManage-4cb658ff.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/holidayManage-0219fa95.js").then((m) => m.default || m)
   },
   {
     name: "hr-base-positionManage",
@@ -917,7 +931,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/positionManage-8b9a8c08.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/positionManage-ddf104d3.js").then((m) => m.default || m)
   },
   {
     name: "hr-base-project",
@@ -925,7 +939,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/project-8374b89b.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/project-249129a1.js").then((m) => m.default || m)
   },
   {
     name: "hr-certificate-approval",
@@ -933,7 +947,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/approval-a552e79b.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/approval-456dce62.js").then((m) => m.default || m)
   },
   {
     name: "hr-certificate-issue",
@@ -941,7 +955,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/issue-23cc6d03.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/issue-fa6cbac8.js").then((m) => m.default || m)
   },
   {
     name: "hr-conexpense-approval",
@@ -949,7 +963,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/approval-df35726b.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/approval-c2ff57ab.js").then((m) => m.default || m)
   },
   {
     name: "hr-conexpense-presentCondition",
@@ -957,7 +971,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/presentCondition-5156f261.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/presentCondition-da045721.js").then((m) => m.default || m)
   },
   {
     name: "hr-conexpense-request",
@@ -965,7 +979,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/request-0c14e211.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/request-c6033771.js").then((m) => m.default || m)
   },
   {
     name: "hr-confinement-unauthorized",
@@ -973,7 +987,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/unauthorized-5e960832.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/unauthorized-13488901.js").then((m) => m.default || m)
   },
   {
     name: "hr-dailyattend-awrds",
@@ -981,7 +995,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/awrds-38833f1e.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/awrds-3483c7b0.js").then((m) => m.default || m)
   },
   {
     name: "hr-dailyattend-register",
@@ -989,7 +1003,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/register-042b0f84.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/register-bbce676d.js").then((m) => m.default || m)
   },
   {
     name: "hr-dailyemp-log",
@@ -997,7 +1011,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/log-c8ba0d37.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/log-4a0b876a.js").then((m) => m.default || m)
   },
   {
     name: "hr-dailyemp-manage",
@@ -1005,7 +1019,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/manage-8abfbf67.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/manage-8608b853.js").then((m) => m.default || m)
   },
   {
     name: "hr-dailysal-awrds",
@@ -1013,7 +1027,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/awrds-54976c1c.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/awrds-fb37aacd.js").then((m) => m.default || m)
   },
   {
     name: "hr-dailysal-register",
@@ -1021,7 +1035,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/register-d9f84cbd.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/register-e4fc77c5.js").then((m) => m.default || m)
   },
   {
     name: "hr-dailysal-salary",
@@ -1029,7 +1043,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/salary-f8947c3e.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/salary-37ab45d4.js").then((m) => m.default || m)
   },
   {
     name: "hr-education-add",
@@ -1037,7 +1051,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/add-f63a7412.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/add-467ab54e.js").then((m) => m.default || m)
   },
   {
     name: "hr-education-approval",
@@ -1045,7 +1059,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/approval-2a8ecebd.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/approval-54cbb6f9.js").then((m) => m.default || m)
   },
   {
     name: "hr-education-list",
@@ -1053,7 +1067,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/list-6965f3cf.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/list-e9de75bd.js").then((m) => m.default || m)
   },
   {
     name: "hr-education-manage",
@@ -1061,7 +1075,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/manage-7e55900a.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/manage-105e5c1c.js").then((m) => m.default || m)
   },
   {
     name: "hr-empeval-add",
@@ -1069,7 +1083,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/add-885c00b7.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/add-8ff97c77.js").then((m) => m.default || m)
   },
   {
     name: "hr-empeval-list",
@@ -1077,7 +1091,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/list-a23c30a1.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/list-8677a05e.js").then((m) => m.default || m)
   },
   {
     name: "hr-empeval-manage",
@@ -1085,7 +1099,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/manage-cee267fa.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/manage-6548678a.js").then((m) => m.default || m)
   },
   {
     name: "hr-salbase-extManage",
@@ -1093,7 +1107,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/extManage-b531b715.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/extManage-674b1d47.js").then((m) => m.default || m)
   },
   {
     name: "hr-salbase-manage",
@@ -1101,7 +1115,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/manage-d5a02f26.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/manage-7d2e6b7f.js").then((m) => m.default || m)
   },
   {
     name: "hr-salbase-socialInsure",
@@ -1109,7 +1123,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/socialInsure-07d8ae05.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/socialInsure-3b5c00f9.js").then((m) => m.default || m)
   },
   {
     name: "hr-salcheck-awrds",
@@ -1117,7 +1131,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/awrds-dcbf5c0c.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/awrds-4bbbefc9.js").then((m) => m.default || m)
   },
   {
     name: "hr-salcheck-month",
@@ -1125,7 +1139,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/month-bbe71427.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/month-89491e2b.js").then((m) => m.default || m)
   },
   {
     name: "hr-salcheck-severancePay",
@@ -1133,7 +1147,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/severancePay-e07a777d.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/severancePay-be3895a0.js").then((m) => m.default || m)
   },
   {
     name: "hr-salreg-award",
@@ -1141,7 +1155,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/award-56155a4b.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/award-b7b032b1.js").then((m) => m.default || m)
   },
   {
     name: "hr-salreg-month",
@@ -1149,7 +1163,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/month-05399d20.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/month-b73f3ecd.js").then((m) => m.default || m)
   },
   {
     name: "hr-salreg-severancePay",
@@ -1157,15 +1171,15 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/severancePay-c8a73bce.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/severancePay-1ce7e7e4.js").then((m) => m.default || m)
   },
   {
-    name: "index",
-    path: "/",
-    meta: {},
-    alias: [],
-    redirect: void 0,
-    component: () => import("./_nuxt/index-1e0e5949.js").then((m) => m.default || m)
+    name: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.name) ?? "index",
+    path: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.path) ?? "/",
+    meta: __nuxt_page_meta$1 || {},
+    alias: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.alias) || [],
+    redirect: (__nuxt_page_meta$1 == null ? void 0 : __nuxt_page_meta$1.redirect) || void 0,
+    component: () => import("./_nuxt/index-e615d6f9.js").then((m) => m.default || m)
   },
   {
     name: (__nuxt_page_meta == null ? void 0 : __nuxt_page_meta.name) ?? "login",
@@ -1173,7 +1187,7 @@ const _routes = [
     meta: __nuxt_page_meta || {},
     alias: (__nuxt_page_meta == null ? void 0 : __nuxt_page_meta.alias) || [],
     redirect: (__nuxt_page_meta == null ? void 0 : __nuxt_page_meta.redirect) || void 0,
-    component: () => import("./_nuxt/login-49e28b7d.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/login-12af87a4.js").then((m) => m.default || m)
   },
   {
     name: "second-page",
@@ -1181,7 +1195,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/second-page-ac6bc017.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/second-page-61e41a17.js").then((m) => m.default || m)
   },
   {
     name: "wiztech-hr-emp-eddEmp",
@@ -1189,7 +1203,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/eddEmp-b86a1602.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/eddEmp-123a6d92.js").then((m) => m.default || m)
   },
   {
     name: "wiztech-hr-emp-findEmp",
@@ -1197,7 +1211,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/findEmp-92b96c22.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/findEmp-b946822c.js").then((m) => m.default || m)
   },
   {
     name: "wiztech-hr-emp-modal-empDetail",
@@ -1205,7 +1219,7 @@ const _routes = [
     meta: {},
     alias: [],
     redirect: void 0,
-    component: () => import("./_nuxt/empDetail-45f96c46.js").then((m) => m.default || m)
+    component: () => import("./_nuxt/empDetail-0d1b29db.js").then((m) => m.default || m)
   }
 ];
 const routerOptions0 = {
@@ -1252,7 +1266,9 @@ function _getHashElementScrollMarginTop(selector) {
 function _isDifferentRoute(from, to) {
   return to.path !== from.path || JSON.stringify(from.params) !== JSON.stringify(to.params);
 }
-const configRouterOptions = {};
+const configRouterOptions = {
+  base: "/nuxtProject/"
+};
 const routerOptions = {
   ...configRouterOptions,
   ...routerOptions0
@@ -13123,8 +13139,8 @@ const _wrapIf = (component, props, slots) => {
   } };
 };
 const layouts = {
-  blank: () => import("./_nuxt/blank-cfc14d68.js").then((m) => m.default || m),
-  default: () => import("./_nuxt/default-c54dcf5f.js").then((m) => m.default || m)
+  blank: () => import("./_nuxt/blank-df81c412.js").then((m) => m.default || m),
+  default: () => import("./_nuxt/default-3be6ebc9.js").then((m) => m.default || m)
 };
 const LayoutLoader = /* @__PURE__ */ defineComponent$1({
   name: "LayoutLoader",
@@ -13999,7 +14015,7 @@ const _sfc_main = {
   __name: "nuxt-root",
   __ssrInlineRender: true,
   setup(__props) {
-    const IslandRenderer = /* @__PURE__ */ defineAsyncComponent(() => import("./_nuxt/island-renderer-67fa5a40.js").then((r) => r.default || r));
+    const IslandRenderer = /* @__PURE__ */ defineAsyncComponent(() => import("./_nuxt/island-renderer-8566ef0e.js").then((r) => r.default || r));
     const nuxtApp = /* @__PURE__ */ useNuxtApp();
     nuxtApp.deferHydration();
     nuxtApp.ssrContext.url;
@@ -14165,10 +14181,12 @@ export {
   VNodeRenderer as b3,
   themeConfig as b4,
   AppContentLayoutNav as b5,
-  switchToVerticalNavOnLtOverlayNavBreakpoint as b6,
-  _sfc_main$f as b7,
-  __nuxt_component_0$1 as b8,
-  _sfc_main$7 as b9,
+  injectHead as b6,
+  resolveUnrefHeadInput as b7,
+  switchToVerticalNavOnLtOverlayNavBreakpoint as b8,
+  _sfc_main$f as b9,
+  __nuxt_component_0$1 as ba,
+  _sfc_main$7 as bb,
   createError as c,
   defineStore as d,
   entry$1 as default,

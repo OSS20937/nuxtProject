@@ -14,7 +14,10 @@ const configStore = useConfigStore()
 switchToVerticalNavOnLtOverlayNavBreakpoint()
 
 const { layoutAttrs, injectSkinClasses } = useSkins()
-
+useHead({
+  title: 'HR',
+  titleTemplate: '%s - NuxtJS Admin Template'
+})
 
 injectSkinClasses()
 </script>

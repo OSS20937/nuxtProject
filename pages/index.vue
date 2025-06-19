@@ -12,6 +12,9 @@ onMounted( () => {
       }
     }
   )
+  definePageMeta({
+  prerender: true
+})
 </script>
 <template>
   <div>
